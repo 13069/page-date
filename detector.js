@@ -476,9 +476,16 @@
 
   // ─── Tier 5: Network / Source Resolution (optional) ──────────────────────
 
+  const SKIP_TIER5_ORIGINS = new Set([
+    'https://page-date.onrender.com',
+    'http://localhost:3847',
+    'http://127.0.0.1:3847'
+  ]);
+
   async function tier5Scan() {
     const results = [];
     const origin = location.origin;
+    if (SKIP_TIER5_ORIGINS.has(origin)) return results;
 
     const endpoints = [
       `${origin}/feed/`,

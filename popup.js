@@ -134,9 +134,18 @@ btnResetQuota.addEventListener('click', () => {
   chrome.runtime.sendMessage({ type: 'RESET_QUOTA' }, () => loadQuota());
 });
 
+let saveTimer;
+function scheduleSave() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(saveSettings, 250);
+}
+
 Object.values(toggles).forEach((t) => t.addEventListener('change', saveSettings));
+apiUrlInput.addEventListener('input', scheduleSave);
 apiUrlInput.addEventListener('change', saveSettings);
+apiKeyInput.addEventListener('input', scheduleSave);
 apiKeyInput.addEventListener('change', saveSettings);
+window.addEventListener('pagehide', saveSettings);
 btnRescan.addEventListener('click', rescanPage);
 
 loadSettings();

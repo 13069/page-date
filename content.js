@@ -1084,6 +1084,8 @@
     chrome.storage.sync.get(DEFAULT_SETTINGS, (stored) => {
       settings = { ...DEFAULT_SETTINGS, ...stored };
       if (stored.hoverMode !== undefined) settings.clickMode = stored.hoverMode;
+      settings.apiKey = (settings.apiKey || '').trim();
+      settings.apiUrl = (settings.apiUrl || DEFAULT_SETTINGS.apiUrl).trim().replace(/\/$/, '');
       if (cb) cb();
     });
   }

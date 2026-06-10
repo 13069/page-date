@@ -21,6 +21,20 @@ chrome.runtime.onInstalled.addListener(() => {
   });
 });
 
+function normalizeSettings(stored = {}) {
+  return {
+    ...DEFAULT_SETTINGS,
+    ...stored,
+    apiKey: (stored.apiKey || '').trim(),
+    apiUrl: (stored.apiUrl || DEFAULT_SETTINGS.apiUrl).trim().replace(/\/$/, '')
+  };
+}
+
+async function loadSettings() {
+  const stored = await chrome.storage.sync.get(DEFAULT_SETTINGS);
+  return normalizeSettings(stored);
+}
+
 async function apiRequest(path, { apiKey, apiUrl, method = 'GET', body } = {}) {
   const base = (apiUrl || DEFAULT_SETTINGS.apiUrl).replace(/\/$/, '');
   const controller = new AbortController();
@@ -56,15 +70,14 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'API_SCAN' || message.type === 'DEEP_SCAN' || message.type === 'INSPECT_ELEMENT') {
     (async () => {
       try {
-        const settings = await chrome.storage.sync.get(DEFAULT_SETTINGS);
-        const apiKey = (settings.apiKey || '').trim();
-        if (!apiKey) {
+        const settings = await loadSettings();
+        if (!settings.apiKey) {
           sendResponse({ ok: false, error: 'API key required' });
           return;
         }
         const payload = message.payload || {};
         const result = await apiRequest('/scan', {
-          apiKey,
+          apiKey: settings.apiKey,
           apiUrl: settings.apiUrl,
           method: 'POST',
           body: payload
@@ -80,7 +93,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'GET_QUOTA') {
     (async () => {
       try {
-        const settings = await chrome.storage.sync.get(DEFAULT_SETTINGS);
+        const settings = await loadSettings();
+        if (!settings.apiKey) {
+          sendResponse({ ok: false, error: 'API key required' });
+          return;
+        }
         const quota = await apiRequest('/usage', {
           apiKey: settings.apiKey,
           apiUrl: settings.apiUrl
@@ -173,7 +190,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'FETCH_URL') {
     (async () => {
       try {
-        const settings = await chrome.storage.sync.get(DEFAULT_SETTINGS);
+        const settings = await loadSettings();
+        if (!settings.apiKey) {
+          sendResponse({ ok: false, error: 'API key required' });
+          return;
+        }
         const result = await apiRequest('/scan', {
           apiKey: settings.apiKey,
           apiUrl: settings.apiUrl,
@@ -191,7 +212,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'RESET_QUOTA') {
     (async () => {
       try {
-        const settings = await chrome.storage.sync.get(DEFAULT_SETTINGS);
+        const settings = await loadSettings();
+        if (!settings.apiKey) {
+          sendResponse({ ok: false, error: 'API key required' });
+          return;
+        }
         await apiRequest('/reset-usage', {
           apiKey: settings.apiKey,
           apiUrl: settings.apiUrl,
