@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PageDate Admin</title>
+  <link rel="stylesheet" href="/css/site.css">
+  <style>
+    .admin-wrap { max-width: 960px; margin: 40px auto; padding: 0 24px 80px; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    th, td { padding: 10px 12px; border-bottom: 1px solid var(--border); text-align: left; }
+    th { color: var(--muted); font-weight: 600; }
+    .status-pending { color: #f0c040; }
+    .status-approved { color: var(--success); }
+    .status-rejected { color: #ff8a8a; }
+    .key-box { background: var(--surface2); padding: 8px; border-radius: 8px; font-family: monospace; word-break: break-all; margin-top: 8px; }
+    .login-box { max-width: 360px; margin: 80px auto; }
+  </style>
+</head>
+<body>
+  <div class="admin-wrap">
+    <div id="login-view" class="login-box form-card">
+      <h2>Admin login</h2>
+      <p class="sub">Enter your admin password</p>
+      <input type="password" id="admin-pass" placeholder="Password">
+      <button class="btn btn-primary" style="width:100%;margin-top:8px" id="login-btn">Login</button>
+      <div id="login-msg" class="msg"></div>
+    </div>
+
+    <div id="panel-view" style="display:none">
+      <nav style="border:none;padding:0 0 24px">
+        <div class="logo">🕒 Admin</div>
+        <button class="btn btn-ghost" id="logout-btn">Logout</button>
+      </nav>
+
+      <h2 style="margin-bottom:16px">API key requests</h2>
+      <p style="color:var(--muted);margin-bottom:20px;font-size:0.9rem">
+        Approve requests to generate an API key. Copy the key and email it to the user manually.
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Use case</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="requests-body"></tbody>
+      </table>
+      <div id="approve-result" class="msg"></div>
+    </div>
+  </div>
+
+  <script>
+    let token = sessionStorage.getItem('pd_admin_token') || '';
+
+    async function api(path, opts = {}) {
+      const res = await fetch('/admin/api' + path, {
+        ...opts,
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: 'Bearer ' + token } : {}),
+          ...(opts.headers || {})
+        }
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || 'Request failed');
+      return data;
+    }
+
+    function showPanel() {
+      document.getElementById('login-view').style.display = 'none';
+      document.getElementById('panel-view').style.display = 'block';
+      loadRequests();
+    }
+
+    document.getElementById('login-btn').onclick = async () => {
+      const msg = document.getElementById('login-msg');
+      try {
+        const data = await fetch('/admin/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password: document.getElementById('admin-pass').value })
+        }).then(r => r.json());
+        if (!data.ok) throw new Error(data.error || 'Login failed');
+        token = data.token;
+        sessionStorage.setItem('pd_admin_token', token);
+        showPanel();
+      } catch (e) {
+        msg.className = 'msg err';
+        msg.textContent = e.message;
+      }
+    };
+
+    document.getElementById('logout-btn').onclick = () => {
+      token = '';
+      sessionStorage.removeItem('pd_admin_token');
+      location.reload();
+    };
+
+    async function loadRequests() {
+      const tbody = document.getElementById('requests-body');
+      const { requests } = await api('/requests');
+      tbody.innerHTML = requests.map(r => `
+        <tr>
+          <td>${new Date(r.createdAt).toLocaleDateString()}</td>
+          <td>${esc(r.name)}</td>
+          <td>${esc(r.email)}</td>
+          <td>${esc(r.useCase || '—').slice(0, 60)}</td>
+          <td class="status-${r.status}">${r.status}</td>
+          <td>${r.status === 'pending' ? `
+            <button class="btn btn-primary" data-approve="${r.id}">Approve</button>
+            <button class="btn btn-ghost" data-reject="${r.id}">Reject</button>
+          ` : (r.apiKey ? `<code>${esc(r.apiKey.slice(0,20))}…</code>` : '—')}</td>
+        </tr>
+      `).join('');
+
+      tbody.querySelectorAll('[data-approve]').forEach(btn => {
+        btn.onclick = async () => {
+          const result = document.getElementById('approve-result');
+          try {
+            const data = await api('/requests/' + btn.dataset.approve + '/approve', { method: 'POST' });
+            result.className = 'msg ok';
+            result.innerHTML = `Approved <strong>${esc(data.email)}</strong>. Send this key by email:<div class="key-box">${esc(data.apiKey)}</div>`;
+            loadRequests();
+          } catch (e) {
+            result.className = 'msg err';
+            result.textContent = e.message;
+          }
+        };
+      });
+
+      tbody.querySelectorAll('[data-reject]').forEach(btn => {
+        btn.onclick = async () => {
+          if (!confirm('Reject this request?')) return;
+          await api('/requests/' + btn.dataset.reject + '/reject', { method: 'POST', body: '{}' });
+          loadRequests();
+        };
+      });
+    }
+
+    function esc(s) {
+      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    if (token) showPanel().catch(() => {});
+  </script>
+</body>
+</html>

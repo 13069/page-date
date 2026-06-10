@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PageDate — Publish date detection API & Chrome extension</title>
+  <meta name="description" content="PageDate detects publish dates on any webpage — images, posts, ads, and more. Chrome extension + developer API.">
+  <link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+  <div class="wrap">
+    <nav>
+      <div class="logo">🕒 <span>PageDate</span></div>
+      <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#api">API</a>
+        <a href="#register">Get API key</a>
+        <a href="privacy.html">Privacy</a>
+        <a href="https://www.linkedin.com/in/l3069" target="_blank" rel="noopener">Author</a>
+      </div>
+    </nav>
+
+    <header class="hero">
+      <div class="hero-badge">Chrome Extension + REST API</div>
+      <h1>See when anything<br>on the web was published</h1>
+      <p>PageDate scans pages and individual elements — images, listings, articles, ads — and surfaces publish dates with confidence scores.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#register">Request API key</a>
+        <a class="btn btn-ghost" href="#api">View API docs</a>
+      </div>
+    </header>
+  </div>
+
+  <section id="features">
+    <div class="wrap">
+      <h2 class="section-title">Built for researchers & power users</h2>
+      <p class="section-sub">Detect dates from HTML, metadata, CMS APIs, image headers, and more.</p>
+      <div class="grid-3">
+        <div class="card">
+          <h3>🔍 Deep page scan</h3>
+          <p>Scans images, posts, text blocks, and containers. Progressive loading as you scroll.</p>
+        </div>
+        <div class="card">
+          <h3>🌍 Multilingual dates</h3>
+          <p>English, Macedonian, Cyrillic month names, relative dates like “today” and “денес”.</p>
+        </div>
+        <div class="card">
+          <h3>📚 Wayback integration</h3>
+          <p>Links to Internet Archive snapshots when available for the current page.</p>
+        </div>
+        <div class="card">
+          <h3>🖱️ Click inspect</h3>
+          <p>Click any element to inspect its date metadata in real time.</p>
+        </div>
+        <div class="card">
+          <h3>⚡ CMS-aware</h3>
+          <p>WordPress REST, Shopify JSON, JSON-LD, Elementor, and filename heuristics.</p>
+        </div>
+        <div class="card">
+          <h3>📊 Export</h3>
+          <p>Export scan results as JSON, CSV, or a timeline report from the extension.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="api">
+    <div class="wrap">
+      <h2 class="section-title">API usage</h2>
+      <p class="section-sub">All scan requests require an API key in the <code>x-api-key</code> header.</p>
+
+      <div class="card" style="margin-bottom:20px">
+        <h3>POST /scan</h3>
+        <p>Full page analysis. Send HTML snapshot + element refs from the extension.</p>
+        <div class="code-block">curl -X POST https://YOUR_DOMAIN/scan \
+  -H "Content-Type: application/json" \
+  -H "x-api-key: YOUR_API_KEY" \
+  -d '{"url":"https://example.com","html":"&lt;body&gt;...","mode":"deep","refs":[]}'</div>
+      </div>
+
+      <div class="grid-3">
+        <div class="card">
+          <h3>GET /usage</h3>
+          <p>Check daily scan quota for your API key.</p>
+        </div>
+        <div class="card">
+          <h3>POST /scan (inspect)</h3>
+          <p>Single-element inspect mode with <code>mode: "inspect"</code>.</p>
+        </div>
+        <div class="card">
+          <h3>Rate limits</h3>
+          <p>200 full scans per day per key. Batch/image modes are lighter on quota.</p>
+        </div>
+      </div>
+
+      <p style="text-align:center;margin-top:24px;color:var(--muted);font-size:0.9rem">
+        Configure the API URL in the extension popup after you receive your key.
+      </p>
+    </div>
+  </section>
+
+  <section id="register" class="form-section">
+    <div class="wrap" style="padding:60px 24px">
+      <div class="form-card">
+        <h2>Request API access</h2>
+        <p class="sub">Keys are issued manually after review to prevent abuse. You'll receive your key by email.</p>
+        <form id="register-form">
+          <label for="name">Full name</label>
+          <input id="name" name="name" required placeholder="Your name">
+
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" required placeholder="you@company.com">
+
+          <label for="website">Website (optional)</label>
+          <input id="website" name="website" type="url" placeholder="https://yoursite.com">
+
+          <label for="useCase">How will you use PageDate?</label>
+          <textarea id="useCase" name="useCase" rows="3" placeholder="Research, journalism, SEO audit…"></textarea>
+
+          <label class="checkbox-row">
+            <input type="checkbox" id="terms" required>
+            <span>I agree to the <a href="terms.html">Terms of Service</a> and <a href="privacy.html">Privacy Policy</a>.</span>
+          </label>
+
+          <button type="submit" class="btn btn-primary" style="width:100%">Submit request</button>
+          <div id="form-msg" class="msg"></div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>PageDate by <a href="https://www.linkedin.com/in/l3069" target="_blank" rel="noopener">Leo</a></p>
+    <p style="margin-top:8px"><a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a></p>
+    <p style="margin-top:16px;opacity:0.6">© 2026 PageDate. Not affiliated with Google or the Internet Archive.</p>
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script src="js/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+node_modules/
+.DS_Store
+*.log
+.env
+.env.*
+
+backend/node_modules/
+backend/data/usage.json
+backend/data/requests.json
+
+# Keep users.json local — use users.json.example in repo
+backend/data/users.json

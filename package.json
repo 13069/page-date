@@ -1,0 +1,9 @@
+{
+  "name": "pagedate",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "api": "npm start --prefix backend",
+    "api:dev": "npm run dev --prefix backend"
+  }
+}

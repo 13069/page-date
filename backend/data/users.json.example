@@ -1,0 +1,11 @@
+{
+  "users": [
+    {
+      "apiKey": "pagedate_sk_live_CHANGE_ME",
+      "plan": "standard",
+      "dailyScanLimit": 200,
+      "name": "Local Dev",
+      "email": "dev@localhost"
+    }
+  ]
+}

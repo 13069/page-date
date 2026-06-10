@@ -1,0 +1,9 @@
+{
+  "version": 2,
+  "name": "pagedate-landing",
+  "public": true,
+  "rewrites": [
+    { "source": "/privacy", "destination": "/privacy.html" },
+    { "source": "/terms", "destination": "/terms.html" }
+  ]
+}
