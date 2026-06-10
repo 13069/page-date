@@ -19,8 +19,8 @@
     analyzePosts: true,
     analyzeText: true,
     analyzeContainers: true,
-    apiKey: 'pagedate_sk_live_8f2c1a9e4b7d3f6c',
-    apiUrl: 'http://localhost:3847'
+    apiKey: '',
+    apiUrl: 'https://page-date.onrender.com'
   };
 
   let settings = { ...DEFAULT_SETTINGS };
@@ -908,7 +908,9 @@
       setProgress(70, 'Processing results…');
 
       if (!response.ok) {
-        scanError = response.status === 429
+        scanError = response.status === 403
+          ? 'Invalid API key — paste Render API_KEY in extension popup'
+          : response.status === 429
           ? 'Daily limit — click Reset in popup'
           : (response.error || 'Server unreachable — is backend running?');
         elementResults = matchServerElements([]);

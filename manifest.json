@@ -5,7 +5,7 @@
   "description": "Automatically detects and displays publish dates on webpages and their elements.",
   "author": "Leo — https://www.linkedin.com/in/l3069",
   "permissions": ["storage", "activeTab"],
-  "host_permissions": ["<all_urls>", "https://archive.org/*", "http://localhost:3847/*", "http://127.0.0.1:3847/*"],
+  "host_permissions": ["<all_urls>", "https://archive.org/*", "https://page-date.onrender.com/*", "http://localhost:3847/*", "http://127.0.0.1:3847/*"],
   "background": {
     "service_worker": "background.js"
   },

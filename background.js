@@ -6,8 +6,8 @@ const DEFAULT_SETTINGS = {
   analyzePosts: true,
   analyzeText: true,
   analyzeContainers: true,
-  apiKey: 'pagedate_sk_live_8f2c1a9e4b7d3f6c',
-  apiUrl: 'http://localhost:3847'
+  apiKey: '',
+  apiUrl: 'https://page-date.onrender.com'
 };
 
 chrome.runtime.onInstalled.addListener(() => {
@@ -57,13 +57,14 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     (async () => {
       try {
         const settings = await chrome.storage.sync.get(DEFAULT_SETTINGS);
-        if (!settings.apiKey) {
+        const apiKey = (settings.apiKey || '').trim();
+        if (!apiKey) {
           sendResponse({ ok: false, error: 'API key required' });
           return;
         }
         const payload = message.payload || {};
         const result = await apiRequest('/scan', {
-          apiKey: settings.apiKey,
+          apiKey,
           apiUrl: settings.apiUrl,
           method: 'POST',
           body: payload

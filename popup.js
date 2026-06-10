@@ -6,8 +6,8 @@ const DEFAULT_SETTINGS = {
   analyzePosts: true,
   analyzeText: true,
   analyzeContainers: true,
-  apiKey: 'pagedate_sk_live_8f2c1a9e4b7d3f6c',
-  apiUrl: 'http://localhost:3847'
+  apiKey: '',
+  apiUrl: 'https://page-date.onrender.com'
 };
 
 const toggles = {
@@ -58,7 +58,7 @@ function getSettings() {
     analyzeText: toggles.analyzeText.checked,
     analyzeContainers: toggles.analyzeContainers.checked,
     apiUrl: apiUrlInput.value.trim() || DEFAULT_SETTINGS.apiUrl,
-    apiKey: apiKeyInput.value.trim() || DEFAULT_SETTINGS.apiKey
+    apiKey: apiKeyInput.value.trim()
   };
 }
 
