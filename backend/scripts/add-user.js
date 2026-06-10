@@ -37,4 +37,6 @@ console.log('\n✅ User added to data/users.json\n');
 console.log('Email:', email);
 console.log('API key (send this to the user):\n');
 console.log(apiKey);
-console.log('\nNext: redeploy Render so the server picks up the new key.\n');
+console.log('\nNext — update Render (no Shell needed):');
+console.log('  Run: node scripts/render-env-help.js');
+console.log('  Copy USERS_JSON into Render → Environment → Save\n');

@@ -19,13 +19,50 @@ function writeJson(filePath, data) {
   fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
 }
 
+function loadUsersFromEnv() {
+  if (process.env.USERS_JSON) {
+    try {
+      const parsed = JSON.parse(process.env.USERS_JSON);
+      const list = Array.isArray(parsed) ? parsed : parsed.users;
+      if (Array.isArray(list) && list.length) return list;
+    } catch (e) {
+      console.error('USERS_JSON parse error:', e.message);
+    }
+  }
+
+  if (process.env.API_KEY?.trim()) {
+    return [{
+      apiKey: process.env.API_KEY.trim(),
+      plan: 'standard',
+      dailyScanLimit: Number(process.env.DAILY_SCAN_LIMIT) || 200,
+      name: process.env.API_KEY_NAME || 'Admin',
+      email: process.env.API_KEY_EMAIL || ''
+    }];
+  }
+
+  return null;
+}
+
+function loadUsers() {
+  const fromEnv = loadUsersFromEnv();
+  if (fromEnv) return fromEnv;
+  const { users = [] } = readJson(USERS_PATH, { users: [] });
+  return users;
+}
+
+let usersCache = loadUsers();
+
+export function reloadUsers() {
+  usersCache = loadUsers();
+  return usersCache;
+}
+
 function todayKey() {
   return new Date().toISOString().slice(0, 10);
 }
 
 export function getUserByApiKey(apiKey) {
-  const { users } = readJson(USERS_PATH, { users: [] });
-  return users.find((u) => u.apiKey === apiKey) || null;
+  return usersCache.find((u) => u.apiKey === apiKey) || null;
 }
 
 export function getUsage(apiKey) {
