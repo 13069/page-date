@@ -8,7 +8,8 @@
     "prestart": "node -e \"import fs from 'fs'; if (!fs.existsSync('data/users.json')) fs.copyFileSync('data/users.json.example','data/users.json');\"",
     "start": "node src/server.js",
     "dev": "node --watch src/server.js",
-    "add-user": "node scripts/add-user.js"
+    "add-user": "node scripts/add-user.js",
+    "render-env": "node scripts/render-env-help.js"
   },
   "dependencies": {
     "cheerio": "^1.0.0",
