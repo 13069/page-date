@@ -1,0 +1,10 @@
+{
+  "users": [
+    {
+      "apiKey": "pagedate_sk_live_mysecretkey123456",
+      "plan": "standard",
+      "dailyScanLimit": 200,
+      "name": "Default User"
+    }
+  ]
+}
