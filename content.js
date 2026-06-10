@@ -346,6 +346,59 @@
 
   // ─── Click mode ──────────────────────────────────────────────────────────
 
+  const INSPECT_TARGET_SEL = 'article,[role="article"],.post,.card,.entry,.listing-item,.listing,.item,figure,picture,img,time,[class*="publish"],.main-article-date,[class*="article-date"],[class*="oglas"],[class*="ad-item"],li';
+
+  function findInspectTarget(el) {
+    if (!el || el.closest?.('#pagedate-root')) return null;
+    const hit = el.closest?.(INSPECT_TARGET_SEL);
+    if (hit && !hit.closest('#pagedate-root')) return hit;
+    return el;
+  }
+
+  function findExistingResultForElement(el) {
+    if (!el) return null;
+    for (let node = el; node && node !== document.documentElement; node = node.parentElement) {
+      const hit = elementResults.find((r) => r.container === node);
+      if (hit) return hit;
+    }
+    return elementResults.find((r) => r.container?.contains?.(el)) || null;
+  }
+
+  function pickBestInspectResult(...candidates) {
+    let best = null;
+    for (const r of candidates) {
+      if (!r?.date) continue;
+      if (!best || (r.confidence || 0) > (best.confidence || 0)) best = r;
+    }
+    return best;
+  }
+
+  function applyInspectResult(target, result) {
+    if (!result?.date) return false;
+    const r = {
+      ...result,
+      container: target,
+      inspectHighlight: true,
+      elementType: result.elementType || X().detectType(target)
+    };
+    const i = elementResults.findIndex((e) => e.container === target);
+    if (i >= 0) elementResults[i] = r;
+    else elementResults.push(r);
+    clickHistory.push({
+      ...r,
+      clickedAt: new Date().toISOString(),
+      selector: target.tagName,
+      linkUrl: r.linkUrl || X().getLinkUrl(target)
+    });
+    datedCounts = countLocalDated();
+    updateLatestUpdate();
+    scanError = null;
+    showInspectToast(target, r);
+    renderInspectBadge(r);
+    renderPageChip();
+    return true;
+  }
+
   function clearClickHighlight() {
     if (clickHighlightEl) {
       clickHighlightEl.classList.remove('pagedate-click-hover');
@@ -355,8 +408,9 @@
 
   function onClickModeMove(e) {
     if (!settings.clickMode || !clickModeActive || e.target.closest('#pagedate-root')) return;
-    const el = document.elementFromPoint(e.clientX, e.clientY);
-    if (!el || el.closest('#pagedate-root')) return;
+    const raw = document.elementFromPoint(e.clientX, e.clientY);
+    const el = findInspectTarget(raw);
+    if (!el) return;
     if (el !== clickHighlightEl) {
       clearClickHighlight();
       clickHighlightEl = el;
@@ -366,9 +420,11 @@
 
   function onClickModeClick(e) {
     if (!settings.clickMode || !clickModeActive || e.target.closest('#pagedate-root')) return;
+    const target = findInspectTarget(clickHighlightEl || e.target);
+    if (!target) return;
     e.preventDefault();
     e.stopPropagation();
-    inspectClickedElement(clickHighlightEl || e.target);
+    inspectClickedElement(target);
     clearClickHighlight();
   }
 
@@ -421,49 +477,60 @@
   }
 
   async function inspectClickedElement(el) {
-    if (!settings.apiKey || !el) return;
-    el.classList.add('pagedate-inspecting');
-    const payload = X().buildElementSnapshot(el);
-    const response = await apiScan(payload);
-    el.classList.remove('pagedate-inspecting');
+    if (!el) return;
+    const target = findInspectTarget(el) || el;
+    target.classList.add('pagedate-inspecting');
 
-    if (!response.ok) {
-      scanError = response.error || 'Inspect failed';
+    const existing = findExistingResultForElement(target);
+    let localResult = null;
+    try {
+      localResult = D().resolveElementDate(target, { visibleOnly: false });
+      if (localResult) {
+        localResult = {
+          ...localResult,
+          container: target,
+          elementType: X().detectType(target),
+          inspectHighlight: true
+        };
+      }
+    } catch { /* local inspect optional */ }
+
+    if (!settings.apiKey) {
+      target.classList.remove('pagedate-inspecting');
+      const best = pickBestInspectResult(existing, localResult);
+      if (applyInspectResult(target, best)) return;
+      scanError = 'API key required for deep inspect';
+      clickHistory.push({ clickedAt: new Date().toISOString(), selector: target.tagName, noDate: true, linkUrl: X().getLinkUrl(target) });
+      showInspectToast(target, null);
       renderPageChip();
       return;
     }
 
-    const results = matchServerElements(response.data.elements || []);
-    if (!results.length && response.data.pageDate) {
-      results.push({
-        ...fromServerResult(response.data.pageDate),
-        container: el,
-        elementType: X().detectType(el),
-        inspectHighlight: true
-      });
+    const payload = X().buildElementSnapshot(target);
+    const response = await apiScan(payload);
+    target.classList.remove('pagedate-inspecting');
+
+    let apiResult = null;
+    if (response.ok) {
+      const matched = matchServerElements(response.data.elements || []);
+      if (matched.length) apiResult = { ...matched[0], container: target, inspectHighlight: true };
+      else if (response.data.pageDate) {
+        apiResult = {
+          ...fromServerResult(response.data.pageDate),
+          container: target,
+          elementType: X().detectType(target),
+          inspectHighlight: true
+        };
+      }
     }
 
-    if (results.length) {
-      for (const r of results) {
-        r.container = r.container || el;
-        r.inspectHighlight = true;
-        const i = elementResults.findIndex((e) => e.container === r.container);
-        if (i >= 0) elementResults[i] = r;
-        else elementResults.push(r);
-        clickHistory.push({ ...r, clickedAt: new Date().toISOString(), selector: el.tagName, linkUrl: r.linkUrl || X().getLinkUrl(el) });
-      }
-      datedCounts = countLocalDated();
-      updateLatestUpdate();
-      scanError = null;
-      showInspectToast(el, results[0]);
-      renderInspectBadge(results[0]);
-      renderPageChip();
-    } else {
-      scanError = 'No date found on this element';
-      clickHistory.push({ clickedAt: new Date().toISOString(), selector: el.tagName, noDate: true, linkUrl: X().getLinkUrl(el) });
-      showInspectToast(el, null);
-      renderPageChip();
-    }
+    const best = pickBestInspectResult(apiResult, localResult, existing);
+    if (applyInspectResult(target, best)) return;
+
+    scanError = response.ok ? 'No date found on this element' : (response.error || 'Inspect failed');
+    clickHistory.push({ clickedAt: new Date().toISOString(), selector: target.tagName, noDate: true, linkUrl: X().getLinkUrl(target) });
+    showInspectToast(target, null);
+    renderPageChip();
   }
 
   function renderInspectBadge(result) {
@@ -1085,7 +1152,7 @@
       settings = { ...DEFAULT_SETTINGS, ...stored };
       if (stored.hoverMode !== undefined) settings.clickMode = stored.hoverMode;
       settings.apiKey = (settings.apiKey || '').trim();
-      settings.apiUrl = (settings.apiUrl || DEFAULT_SETTINGS.apiUrl).trim().replace(/\/$/, '');
+      settings.apiUrl = DEFAULT_SETTINGS.apiUrl;
       if (cb) cb();
     });
   }

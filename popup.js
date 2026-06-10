@@ -1,3 +1,5 @@
+const API_URL = 'https://page-date.onrender.com';
+
 const DEFAULT_SETTINGS = {
   enabled: true,
   clickMode: false,
@@ -7,7 +9,7 @@ const DEFAULT_SETTINGS = {
   analyzeText: true,
   analyzeContainers: true,
   apiKey: '',
-  apiUrl: 'https://page-date.onrender.com'
+  apiUrl: API_URL
 };
 
 const toggles = {
@@ -20,7 +22,6 @@ const toggles = {
   analyzeContainers: document.getElementById('toggle-containers')
 };
 
-const apiUrlInput = document.getElementById('api-url');
 const apiKeyInput = document.getElementById('api-key');
 const statusText = document.getElementById('status-text');
 const infoPageDate = document.getElementById('info-page-date');
@@ -30,7 +31,6 @@ const infoCms = document.getElementById('info-cms');
 const quotaScans = document.getElementById('quota-scans');
 const quotaRemaining = document.getElementById('quota-remaining');
 const btnRescan = document.getElementById('btn-rescan');
-const btnResetQuota = document.getElementById('btn-reset-quota');
 
 function loadSettings() {
   chrome.storage.sync.get(DEFAULT_SETTINGS, (settings) => {
@@ -41,7 +41,6 @@ function loadSettings() {
     toggles.analyzePosts.checked = settings.analyzePosts;
     toggles.analyzeText.checked = settings.analyzeText;
     toggles.analyzeContainers.checked = settings.analyzeContainers;
-    apiUrlInput.value = settings.apiUrl || DEFAULT_SETTINGS.apiUrl;
     apiKeyInput.value = settings.apiKey || DEFAULT_SETTINGS.apiKey;
     updateStatus(settings.enabled);
     loadQuota();
@@ -57,7 +56,7 @@ function getSettings() {
     analyzePosts: toggles.analyzePosts.checked,
     analyzeText: toggles.analyzeText.checked,
     analyzeContainers: toggles.analyzeContainers.checked,
-    apiUrl: apiUrlInput.value.trim() || DEFAULT_SETTINGS.apiUrl,
+    apiUrl: API_URL,
     apiKey: apiKeyInput.value.trim()
   };
 }
@@ -130,10 +129,6 @@ async function rescanPage() {
   }
 }
 
-btnResetQuota.addEventListener('click', () => {
-  chrome.runtime.sendMessage({ type: 'RESET_QUOTA' }, () => loadQuota());
-});
-
 let saveTimer;
 function scheduleSave() {
   clearTimeout(saveTimer);
@@ -141,8 +136,6 @@ function scheduleSave() {
 }
 
 Object.values(toggles).forEach((t) => t.addEventListener('change', saveSettings));
-apiUrlInput.addEventListener('input', scheduleSave);
-apiUrlInput.addEventListener('change', saveSettings);
 apiKeyInput.addEventListener('input', scheduleSave);
 apiKeyInput.addEventListener('change', saveSettings);
 window.addEventListener('pagehide', saveSettings);

@@ -1,3 +1,5 @@
+const API_URL = 'https://page-date.onrender.com';
+
 const DEFAULT_SETTINGS = {
   enabled: true,
   clickMode: false,
@@ -7,12 +9,21 @@ const DEFAULT_SETTINGS = {
   analyzeText: true,
   analyzeContainers: true,
   apiKey: '',
-  apiUrl: 'https://page-date.onrender.com'
+  apiUrl: API_URL
 };
+
+function normalizeSettings(stored = {}) {
+  return {
+    ...DEFAULT_SETTINGS,
+    ...stored,
+    apiKey: (stored.apiKey || '').trim(),
+    apiUrl: API_URL
+  };
+}
 
 chrome.runtime.onInstalled.addListener(() => {
   chrome.storage.sync.get(DEFAULT_SETTINGS, (stored) => {
-    const merged = { ...DEFAULT_SETTINGS, ...stored };
+    const merged = normalizeSettings(stored);
     if (stored.hoverMode !== undefined) merged.clickMode = stored.hoverMode;
     delete merged.hoverMode;
     delete merged.deepAnalysis;
@@ -20,15 +31,6 @@ chrome.runtime.onInstalled.addListener(() => {
     chrome.storage.sync.set(merged);
   });
 });
-
-function normalizeSettings(stored = {}) {
-  return {
-    ...DEFAULT_SETTINGS,
-    ...stored,
-    apiKey: (stored.apiKey || '').trim(),
-    apiUrl: (stored.apiUrl || DEFAULT_SETTINGS.apiUrl).trim().replace(/\/$/, '')
-  };
-}
 
 async function loadSettings() {
   const stored = await chrome.storage.sync.get(DEFAULT_SETTINGS);

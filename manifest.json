@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "PageDate",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Automatically detects and displays publish dates on webpages and their elements.",
   "author": "Leo — https://www.linkedin.com/in/l3069",
   "permissions": ["storage", "activeTab"],

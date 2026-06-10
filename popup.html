@@ -31,7 +31,7 @@
       <label class="toggle-row">
         <span class="toggle-label">
           <span class="toggle-icon">👆</span> Click mode
-          <span class="toggle-hint">Hover to select, click to inspect element</span>
+          <span class="toggle-hint">Hover to highlight, click to inspect</span>
         </span>
         <input type="checkbox" id="toggle-click">
         <span class="toggle-switch"></span>
@@ -69,15 +69,12 @@
 
     <section class="popup-api">
       <h2 class="section-title">API (200 scans/day)</h2>
-      <label class="field-label" for="api-url">Backend URL</label>
-      <input type="text" id="api-url" class="field-input" value="https://page-date.onrender.com">
       <label class="field-label" for="api-key">API Key</label>
-      <input type="password" id="api-key" class="field-input" placeholder="Same as Render API_KEY">
+      <input type="password" id="api-key" class="field-input" placeholder="Paste key from approval email">
       <div class="quota-box">
         <div class="quota-row"><span>Scans today</span><span id="quota-scans">—</span></div>
         <div class="quota-row"><span>Remaining</span><span id="quota-remaining">—</span></div>
       </div>
-      <button class="btn-secondary" id="btn-reset-quota">Reset today's usage</button>
     </section>
 
     <section class="popup-info">
