@@ -1,0 +1,39 @@
+PageDate — Chrome Web Store upload checklist
+==========================================
+
+ZIP to upload
+  dist/page-date-extension-v1.2.1.zip
+
+Rebuild later
+  ./scripts/package-extension.sh
+
+Dashboard fields (Chrome Web Store → your item)
+  Homepage URL:     https://13069.github.io/page-date/
+  Privacy policy:   https://13069.github.io/page-date/privacy.html
+  Category:         Productivity (or Developer Tools)
+  Language:         English
+
+Single purpose
+  Detect and display publish/creation dates on web pages and page elements.
+
+Permission justifications (copy into the form)
+  storage     — Save user settings and API key in Chrome sync storage
+  activeTab     — Access the current tab when the user opens the popup or scans
+  <all_urls>    — Read page content on sites the user visits to detect dates
+  archive.org   — Check Internet Archive Wayback availability for the page
+  page-date.onrender.com — Send page snapshots to the PageDate API when the user provides an API key
+
+Data use / privacy (declare in the form)
+  - Extension reads page HTML/DOM on pages the user visits
+  - With a user-provided API key, page snapshots are sent to page-date.onrender.com for analysis
+  - API key and preferences stored in Chrome sync storage only
+  - No data sold to third parties
+
+Store listing assets you still need (not in the zip)
+  - 128×128 icon (use icons/icon128.png)
+  - At least 1 screenshot (1280×800 or 640×400 recommended)
+  - Optional: small promo tile 440×280
+
+After approval
+  Users request a key at https://13069.github.io/page-date/#register
+  You email them a key; they paste it in the extension popup.

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PageDate</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup">
+    <header class="popup-header">
+      <div class="popup-logo">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+          <rect width="28" height="28" rx="8" fill="#5B5FC7"/>
+          <path d="M8 14.5C8 11.46 10.46 9 13.5 9H19V11H13.5C11.57 11 10 12.57 10 14.5C10 16.43 11.57 18 13.5 18H19V20H13.5C10.46 20 8 17.54 8 14.5Z" fill="white"/>
+          <circle cx="19" cy="14.5" r="2" fill="white"/>
+        </svg>
+      </div>
+      <div class="popup-title-group">
+        <h1 class="popup-title">PageDate</h1>
+        <p class="popup-status" id="status-text">Status: Active</p>
+      </div>
+    </header>
+
+    <section class="popup-section">
+      <label class="toggle-row">
+        <span class="toggle-label"><span class="toggle-icon">✅</span> Enable PageDate</span>
+        <input type="checkbox" id="toggle-enabled" checked>
+        <span class="toggle-switch"></span>
+      </label>
+      <label class="toggle-row">
+        <span class="toggle-label">
+          <span class="toggle-icon">👆</span> Click mode
+          <span class="toggle-hint">Hover to highlight, click to inspect</span>
+        </span>
+        <input type="checkbox" id="toggle-click">
+        <span class="toggle-switch"></span>
+      </label>
+      <label class="toggle-row">
+        <span class="toggle-label"><span class="toggle-icon">🕒</span> Show inspector widget</span>
+        <input type="checkbox" id="toggle-page-date" checked>
+        <span class="toggle-switch"></span>
+      </label>
+    </section>
+
+    <section class="popup-section" id="analyze-section">
+      <p class="section-title-inline">Analyze on page:</p>
+      <label class="toggle-row">
+        <span class="toggle-label"><span class="toggle-icon">📷</span> Images</span>
+        <input type="checkbox" id="toggle-images" checked>
+        <span class="toggle-switch"></span>
+      </label>
+      <label class="toggle-row">
+        <span class="toggle-label"><span class="toggle-icon">📝</span> Posts & cards</span>
+        <input type="checkbox" id="toggle-posts" checked>
+        <span class="toggle-switch"></span>
+      </label>
+      <label class="toggle-row">
+        <span class="toggle-label"><span class="toggle-icon">💬</span> Text & comments</span>
+        <input type="checkbox" id="toggle-text" checked>
+        <span class="toggle-switch"></span>
+      </label>
+      <label class="toggle-row">
+        <span class="toggle-label"><span class="toggle-icon">📦</span> Containers</span>
+        <input type="checkbox" id="toggle-containers" checked>
+        <span class="toggle-switch"></span>
+      </label>
+    </section>
+
+    <section class="popup-api">
+      <h2 class="section-title">API (200 scans/day)</h2>
+      <label class="field-label" for="api-key">API Key</label>
+      <input type="password" id="api-key" class="field-input" placeholder="Paste key from approval email">
+      <div class="quota-box">
+        <div class="quota-row"><span>Scans today</span><span id="quota-scans">—</span></div>
+        <div class="quota-row"><span>Remaining</span><span id="quota-remaining">—</span></div>
+      </div>
+    </section>
+
+    <section class="popup-info">
+      <div class="info-row"><span class="info-label">Page date</span><span class="info-value" id="info-page-date">—</span></div>
+      <div class="info-row"><span class="info-label">Scanned</span><span class="info-value" id="info-scanned">—</span></div>
+      <div class="info-row"><span class="info-label">With dates</span><span class="info-value" id="info-dated">—</span></div>
+      <div class="info-row"><span class="info-label">CMS</span><span class="info-value" id="info-cms">—</span></div>
+    </section>
+
+    <button class="btn-primary" id="btn-rescan">Scan page again</button>
+
+    <footer class="popup-footer">
+      <a href="https://www.linkedin.com/in/l3069" target="_blank" rel="noopener">Leo</a>
+      · <a href="https://13069.github.io/page-date/privacy.html" target="_blank" rel="noopener">Privacy</a>
+      · <a href="https://13069.github.io/page-date/" target="_blank" rel="noopener">Website</a>
+    </footer>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>

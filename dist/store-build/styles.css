@@ -1,0 +1,456 @@
+/* PageDate overlay styles — injected into page context */
+
+#pagedate-root {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2147483646;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+#pagedate-root * {
+  box-sizing: border-box;
+}
+
+/* ─── Page info chip ─────────────────────────────────────────────────────── */
+
+.pagedate-chip {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  pointer-events: auto;
+  display: flex;
+  align-items: stretch;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04);
+  font-size: 12px;
+  color: #1a1a1a;
+  max-width: 280px;
+  animation: pagedate-fade-in 180ms ease-out;
+  transition: transform 180ms ease, box-shadow 180ms ease;
+  z-index: 2147483647;
+}
+
+.pagedate-chip:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 28px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.pagedate-chip-collapsed .pagedate-chip-body {
+  display: none;
+}
+
+.pagedate-chip-collapsed .pagedate-chip-arrow {
+  transform: rotate(180deg);
+}
+
+.pagedate-chip-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: #666;
+  border-radius: 12px 0 0 12px;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.pagedate-chip-toggle:hover {
+  background: rgba(0, 0, 0, 0.04);
+  color: #333;
+}
+
+.pagedate-chip-arrow {
+  font-size: 10px;
+  transition: transform 180ms ease;
+}
+
+.pagedate-chip-body {
+  padding: 10px 14px 10px 4px;
+  line-height: 1.45;
+}
+
+.pagedate-chip-brand {
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  color: #5b5fc7;
+  margin-bottom: 4px;
+}
+
+.pagedate-progress-wrap {
+  margin: 6px 0 4px;
+}
+
+.pagedate-progress-label {
+  font-size: 10px;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+.pagedate-progress-track {
+  height: 4px;
+  background: rgba(91, 95, 199, 0.12);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.pagedate-progress-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #5b5fc7, #7b7fd7);
+  border-radius: 4px;
+  transition: width 280ms ease;
+}
+
+.pagedate-wayback-link {
+  font-weight: 600;
+  color: #5b5fc7;
+  text-decoration: none;
+  pointer-events: auto;
+}
+
+.pagedate-wayback-link:hover {
+  text-decoration: underline;
+}
+
+.pagedate-inspector .pagedate-chip-divider {
+  height: 1px;
+  background: rgba(0, 0, 0, 0.06);
+  margin: 6px 0 8px;
+}
+
+.pagedate-chip-row {
+  font-size: 11px;
+  color: #444;
+  line-height: 1.6;
+}
+
+.pagedate-chip-val {
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.pagedate-chip-mode {
+  margin-top: 8px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #888;
+  padding: 4px 8px;
+  background: rgba(0, 0, 0, 0.04);
+  border-radius: 6px;
+  display: inline-block;
+}
+
+.pagedate-chip-mode.pagedate-mode-deep {
+  color: #5b5fc7;
+  background: rgba(91, 95, 199, 0.1);
+}
+
+.pagedate-chip-mode.pagedate-scanning {
+  animation: pagedate-pulse 1s ease infinite;
+}
+
+.pagedate-chip-error {
+  margin-top: 6px;
+  font-size: 10px;
+  color: #ea4335;
+  line-height: 1.4;
+}
+
+@keyframes pagedate-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.pagedate-badge-cms {
+  font-size: 9px;
+  opacity: 0.75;
+  margin-left: 2px;
+}
+
+.pagedate-chip-date {
+  font-weight: 500;
+  color: #1a1a1a;
+}
+
+.pagedate-chip-meta {
+  font-size: 10px;
+  color: #888;
+  margin-top: 3px;
+}
+
+.pagedate-chip { border-left: 3px solid #5b5fc7; }
+
+/* ─── Element badges ─────────────────────────────────────────────────────── */
+
+.pagedate-badge {
+  position: fixed;
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background: rgba(20, 20, 20, 0.75);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  color: rgba(255, 255, 255, 0.92);
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+  opacity: 0.85;
+  z-index: 2147483645;
+  animation: pagedate-badge-in 150ms ease-out;
+  transition: opacity 150ms ease, transform 150ms ease, box-shadow 150ms ease;
+  border: 1.5px solid transparent;
+}
+
+.pagedate-badge:hover {
+  opacity: 1;
+  transform: translateY(-1px) scale(1.02);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.22);
+}
+
+.pagedate-badge-icon {
+  font-size: 10px;
+  line-height: 1;
+}
+
+.pagedate-badge-text {
+  letter-spacing: 0.01em;
+}
+
+.pagedate-badge-time {
+  opacity: 0.8;
+  font-size: 10px;
+}
+
+.pagedate-badge-type {
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  opacity: 0.7;
+  margin-right: 2px;
+}
+
+.pagedate-chip-breakdown {
+  font-size: 10px;
+  color: #666;
+  margin: 4px 0 6px;
+  line-height: 1.4;
+}
+
+.pagedate-type-image {
+  font-size: 10px;
+}
+
+.pagedate-type-text {
+  max-width: 160px;
+  font-size: 10px;
+}
+
+/* Hover-only mode */
+.pagedate-badge.pagedate-hover-only {
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.95);
+}
+
+.pagedate-badge.pagedate-hover-only.pagedate-visible {
+  opacity: 0.95;
+  pointer-events: auto;
+  transform: scale(1);
+}
+
+.pagedate-badge { border-color: rgba(255, 255, 255, 0.25); }
+
+.pagedate-badge.pagedate-inferred {
+  border-style: dashed;
+  opacity: 0.75;
+}
+
+.pagedate-tooltip-inferred {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  font-size: 10px;
+  color: rgba(255, 200, 100, 0.85);
+  font-style: italic;
+}
+
+/* ─── Hover highlight on page elements ───────────────────────────────────── */
+
+.pagedate-highlight,
+.pagedate-click-hover {
+  outline: 2px solid rgba(91, 95, 199, 0.55) !important;
+  outline-offset: 2px;
+  background-color: rgba(91, 95, 199, 0.06) !important;
+  transition: outline 120ms ease, background-color 120ms ease;
+  cursor: crosshair !important;
+}
+
+.pagedate-click-active * {
+  cursor: crosshair !important;
+}
+
+.pagedate-click-active #pagedate-root,
+.pagedate-click-active #pagedate-root * {
+  cursor: default !important;
+}
+
+.pagedate-inspecting {
+  outline: 2px solid #5b5fc7 !important;
+  animation: pagedate-pulse 0.8s ease infinite;
+}
+
+.pagedate-chip-hint {
+  margin-top: 6px;
+  font-size: 10px;
+  color: #5b5fc7;
+  font-weight: 500;
+}
+
+.pagedate-chip-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 8px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.pagedate-chip-btn {
+  pointer-events: auto;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: rgba(91, 95, 199, 0.08);
+  color: #5b5fc7;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 3px 7px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.pagedate-chip-btn:hover {
+  background: rgba(91, 95, 199, 0.16);
+}
+
+.pagedate-inspect-copy {
+  pointer-events: auto;
+  margin-top: 6px;
+  border: none;
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  font-size: 10px;
+  padding: 3px 8px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.pagedate-inspect-toast {
+  position: fixed;
+  pointer-events: none;
+  padding: 10px 14px;
+  background: rgba(91, 95, 199, 0.95);
+  color: #fff;
+  border-radius: 10px;
+  font-size: 12px;
+  line-height: 1.45;
+  box-shadow: 0 8px 28px rgba(91, 95, 199, 0.35);
+  z-index: 2147483647;
+  max-width: 240px;
+  animation: pagedate-fade-in 150ms ease-out;
+}
+
+.pagedate-inspect-title {
+  font-size: 10px;
+  opacity: 0.85;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 4px;
+}
+
+.pagedate-inspect-date {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.pagedate-inspect-updated {
+  font-size: 11px;
+  opacity: 0.9;
+  margin-top: 2px;
+}
+
+.pagedate-inspect-meta {
+  font-size: 10px;
+  opacity: 0.8;
+  margin-top: 4px;
+}
+
+.pagedate-inspect-badge {
+  opacity: 1 !important;
+  border: 2px solid #5b5fc7 !important;
+  z-index: 2147483647;
+}
+
+/* ─── Tooltip ─────────────────────────────────────────────────────────────── */
+
+.pagedate-tooltip {
+  position: fixed;
+  pointer-events: none;
+  padding: 10px 14px;
+  background: rgba(30, 30, 30, 0.88);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: #f0f0f0;
+  border-radius: 10px;
+  font-size: 11px;
+  line-height: 1.5;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  z-index: 2147483647;
+  max-width: 260px;
+  animation: pagedate-fade-in 150ms ease-out;
+}
+
+.pagedate-tooltip-row {
+  margin: 1px 0;
+}
+
+.pagedate-tooltip-row strong {
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 500;
+}
+
+/* ─── Animations ──────────────────────────────────────────────────────────── */
+
+@keyframes pagedate-fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pagedate-badge-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 0.85; transform: scale(1); }
+}
+
+/* ─── Dark page adaptation (light badges on dark bg) ─────────────────────── */
+
+@media (prefers-color-scheme: light) {
+  .pagedate-chip {
+    background: rgba(255, 255, 255, 0.92);
+    color: #1a1a1a;
+  }
+}
